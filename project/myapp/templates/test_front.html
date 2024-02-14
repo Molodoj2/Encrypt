@@ -1,0 +1,73 @@
+{% load static %}
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Методи шифрування</title>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}?v=1">
+    <script src="{% static 'js/main.js' %}?v=1"></script>
+    <script src="{% static 'js/methods.js' %}?v=1"></script>
+    <link rel="shortcut icon" href="{% static '/Images/logo.png' %}" type="image/x-icon">
+</head>
+
+<body>
+    <form id="form" method="post" action="{% url 'test_front' %}">
+        {% csrf_token %}
+        <h1>Оберіть метод шифрування</h1>
+        <select id="method" name="method" style="background-color: #ffffcc">
+            {% for option in encryption_methods %}
+            <option value="{{ option }}" {% if option in exclude_methods %}disabled{% endif %}
+                    {% if method == option %}selected="selected" {% endif %}>{{ option }}
+            </option>
+            {% endfor %}
+        </select>
+
+<!--        <p id="selectedMethod" style="font-size: 24px; color: white; font-weight: bold;"></p>-->
+        <div id="input_for_encrypt"></div>
+
+        <label for="encryption_key">Ключ шифрування:</label>
+        <div style="position: relative;">
+            <textarea id="encryption_key" name="encryption_key" rows=""
+                      style="resize: none; background-color: #ffeb9c">{{ decrypted_key }}</textarea>
+            <button type="button" onclick="copyKey()" class="copy"
+                    style="position: absolute; top: 0; right: 0; background-image: url('{% static '/Images/copy.gif' %}');
+                    background-size: contain; width: 30px; height: 30px; background-color: transparent;"></button>
+        </div>
+
+        {% if decrypted_text %}
+        <label for="decrypt">Розшифрований текст:</label>
+        <textarea id="decrypt" name="decrypt" rows="10" cols="80"
+                  style="background-color: #c6efce;" readonly>{{ decrypted_text }}</textarea>
+        {% endif %}
+
+        {% if encrypted_text %}
+        <label for="encrypted">Зашифрований текст:</label>
+        <div style="position: relative;">
+            <textarea id="encrypted" name="encrypted" rows="10" cols="80"
+                      style="background-color: #ffc7ce;  ">{{ encrypted_text }}</textarea>
+            <button type="button" onclick="copyText()"
+                    style="position: absolute; top: 0; right: 0; background-image: url('{% static '/Images/copy.gif' %}');
+                    background-size: contain; width: 30px; height: 30px; background-color: transparent;"></button>
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 10px; padding: 20px;">
+            <button class="button" type="submit" name="action" value="encrypt" style="background-color: #ffc7ce;">
+                Encrypt
+            </button>
+            <button class="button" type="button" onclick="clearText()">Clear Text</button>
+            <button class="button" type="submit" name="action" value="decrypt" style="background-color: #c6efce;">
+                Decrypt
+            </button>
+        </div>
+
+        {% if description %}
+        <p style="font-size: 16px; font-weight: bold; line-height: 1.5; margin-bottom: 20px; padding: 10px;
+              border: 1px solid #c6efce;  border-radius: 20px; text-align: justify; }">
+            {{ description }}
+        </p>
+        {% endif %}
+    </form>
+</body>
+</html>
